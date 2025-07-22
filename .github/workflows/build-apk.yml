@@ -13,19 +13,32 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Download Flutter 3.22.1
+      - name: Install Flutter 3.22.1
         run: |
           git clone https://github.com/flutter/flutter.git --branch 3.22.1 --depth 1
           echo "$GITHUB_WORKSPACE/flutter/bin" >> $GITHUB_PATH
+          export PATH="$GITHUB_WORKSPACE/flutter/bin:$PATH"
+          flutter doctor
+        shell: bash
 
-      - name: Set Flutter as default
-        run: flutter --version
+      - name: Enable Flutter
+        run: |
+          export PATH="$GITHUB_WORKSPACE/flutter/bin:$PATH"
+          flutter doctor
+          flutter config --no-analytics
+        shell: bash
 
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          export PATH="$GITHUB_WORKSPACE/flutter/bin:$PATH"
+          flutter pub get
+        shell: bash
 
       - name: Build APK
-        run: flutter build apk --release
+        run: |
+          export PATH="$GITHUB_WORKSPACE/flutter/bin:$PATH"
+          flutter build apk --release
+        shell: bash
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
